@@ -1,0 +1,55 @@
+<div class="panel panel-default row" ng-controller="productListCtrl"
+    ng-hide="data.error">
+    <div class="col-xs-3">
+        <!-- Categories go here-->
+        <a ng-click="selectCategory()"
+            class="btn btn-block btn-default btn-lg"> Home </a>
+        <a ng-repeat="item in data.products | orderBy:'category' | unique:'category'"
+            ng-click="selectCategory(item)" class=" btn btn-block btn-default btn-lg"
+            ng-class="getCategoryClass(item)">
+            {{item}}
+        </a>
+    </div>
+    <div class="col-xs-8">
+        <!-- Produtcs go here-->
+        <!-- IMPORTANT: about this ng-repeat 
+            this works in order! ORDER!
+            first it generates a LIST with all the items,
+            then it runs the filter that give TRUE or FALSE on the LIST that was
+            generated before clearing the FALSE returns.
+            Then this LIST is passe to the RANGE filter with the argument DATA, the 
+            value for the page argument is 1 because it should always start with 1 when
+            you change a category and the size is 3 because there are only 3 categories.
+        -->
+        <div class="well" 
+        ng-repeat=
+    "item in data.products | filter:categoryFilterFn | range:selectedPage:pageSize">
+            <h3>
+                <strong>{{item.name}}</strong>
+                <span class="pull-right label label-primary">
+                    {{item.price | currency}}
+                </span>
+            </h3>
+            <button ng-click="addProductToCart(item)" class= "btn btn-success pull-right">
+                Add to cart
+            </button>
+            <span class="lead"> {{item.description}} </span>
+        </div>
+        <!-- The result of the pageCount is an Array with the number of pages, an integer
+        That value is the $index value.
+        OMG the CHAINING on this is on another level.
+        This is all about the CHAINING!
+        IMPORTANT: When you click to change page, this will run 2 TIMES. The first change the top ng-directive
+        and the bottom one does not do anything. Then it runs again and this time only the bottom ng-directive will
+            work.
+        -->
+        <div class="pull-right btn-group">
+            <a ng-repeat=
+                "page in data.products | filter:categoryFilterFn | pageCount:pageSize"
+                ng-click="selectPage($index + 1)" class="btn btn-default"
+                ng-class="getPageClass($index + 1)">
+                {{$index + 1}}
+            </a>
+        </div>
+    </div>
+</div>
